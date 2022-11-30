@@ -4,7 +4,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="inginious-problems-demo",
+    name="inginious-problems-parson",
     version="0.1dev0",
     description="Plugin to add demo problem type",
     packages=find_packages(),

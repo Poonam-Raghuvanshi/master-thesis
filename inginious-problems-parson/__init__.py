@@ -26,7 +26,7 @@ class StaticMockPage(INGIniousPage):
         return self.GET(path)
 
 
-class DemoProblem(Problem):
+class ParsonProblem(Problem):
     """Display an input box and check that the content is correct"""
 
     def __init__(self, problemid, content, translations, taskfs):
@@ -63,25 +63,25 @@ class DemoProblem(Problem):
         return Problem.get_text_fields()
 
 
-class DisplayableDemoProblem(DemoProblem, DisplayableProblem):
+class DisplayableParsonProblem(ParsonProblem, DisplayableProblem):
     """ A displayable match problem """
 
     def __init__(self, problemid, content, translations, taskfs):
-        DemoProblem.__init__(self, problemid, content, translations, taskfs)
+        ParsonProblem.__init__(self, problemid, content, translations, taskfs)
 
     @classmethod
     def get_type_name(self, language):
-        return "demo"
+        return "parson"
 
     def show_input(self, template_helper, language, seed):
         """ Show DemoProblem """
         header = ParsableText(self.gettext(language, self._header), "rst",
                               translation=self.get_translation_obj(language))
-        return template_helper.render("demo.html", template_folder=PATH_TO_TEMPLATES, inputId=self.get_id(), header=header)
+        return template_helper.render("parson-plugin.html", template_folder=PATH_TO_TEMPLATES, inputId=self.get_id(), header=header)
 
     @classmethod
     def show_editbox(cls, template_helper, key, language):
-        return template_helper.render("demo_edit.html", template_folder=PATH_TO_TEMPLATES, key=key)
+        return template_helper.render("parson-plugin_edit.html", template_folder=PATH_TO_TEMPLATES, key=key)
 
     @classmethod
     def show_editbox_templates(cls, template_helper, key, language):
@@ -90,7 +90,21 @@ class DisplayableDemoProblem(DemoProblem, DisplayableProblem):
 
 def init(plugin_manager, course_factory, client, plugin_config):
     # TODO: Replace by shared static middleware and let webserver serve the files
-    plugin_manager.add_page('/plugins/demo/static/<path:path>', StaticMockPage.as_view("demoproblemstaticpage"))
-    plugin_manager.add_hook("css", lambda: "/plugins/demo/static/demo.css")
-    plugin_manager.add_hook("javascript_header", lambda: "/plugins/demo/static/demo.js")
-    course_factory.get_task_factory().add_problem_type(DisplayableDemoProblem)
+    plugin_manager.add_page('/plugins/demo/static/<path:path>', StaticMockPage.as_view("parsonproblemstaticpage"))
+    plugin_manager.add_hook("css", lambda: "/plugins/demo/static/parson-plugin.css")
+    plugin_manager.add_hook("css", lambda: "/plugins/demo/static/parsons.css")
+    plugin_manager.add_hook("css", lambda: "/plugins/demo/static/prettify.css")
+
+    plugin_manager.add_hook("javascript_header", lambda: "/plugins/demo/static/prettify.js")
+    plugin_manager.add_hook("javascript_header", lambda: "/plugins/demo/static/jquery.min.js")
+    plugin_manager.add_hook("javascript_header", lambda: "/plugins/demo/static/jquery-ui.min.js")
+    plugin_manager.add_hook("javascript_header", lambda: "/plugins/demo/static/jquery.ui.touch-punch.min.js")
+    plugin_manager.add_hook("javascript_header", lambda: "/plugins/demo/static/underscore-min.js")
+    plugin_manager.add_hook("javascript_header", lambda: "/plugins/demo/static/lis.js")
+    plugin_manager.add_hook("javascript_header", lambda: "/plugins/demo/static/parsons.js")
+
+    #plugin_manager.add_hook("javascript_header", lambda: "/plugins/demo/static/jquery.sound.js")
+    #plugin_manager.add_hook("javascript_header", lambda: "/plugins/demo/static/skulpt.js")
+    #plugin_manager.add_hook("javascript_header", lambda: "/plugins/demo/static/skulpt-stdlib.js")
+    plugin_manager.add_hook("javascript_header", lambda: "/plugins/demo/static/parson-plugin.js")
+    course_factory.get_task_factory().add_problem_type(DisplayableParsonProblem)
